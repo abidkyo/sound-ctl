@@ -89,10 +89,11 @@ get_volume() {
 
 set_volume() {
 	if [[ $1 -ge 0 && $1 -le 100 ]]; then
-		pactl set-sink-volume "$outputSink" $1%
+		pactl set-sink-volume "$outputSink" $1% || show_help
 		echo "Set volume to $1%"
 	else
 		echo "Invalid volume value"
+		show_help
 	fi
 }
 
