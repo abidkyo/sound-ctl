@@ -150,7 +150,6 @@ case $1 in
 *)
 	echo "Invalid argument"
 	show_help
-	exit 1
 	;;
 esac
 
