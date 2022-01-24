@@ -72,20 +72,29 @@ toggle_input() {
 }
 
 get_output() {
-	if pacmd list-sinks | grep 'active port' | grep lineout >/dev/null; then
+	local active_port=$(pactl list sinks | grep -A 50 "$outputSink" | grep "Active Port")
+	if [[ "$active_port" =~ "$speaker" ]]; then
 		echo "SP"
-	else
+	elif [[ "$active_port" =~ "$headphone" ]]; then
 		echo "HP"
+	else
+		echo "Error getting output status"
+		exit 1
 	fi
 }
 
 toggle_output() {
-	if [[ "$(get_output)" = "SP" ]]; then
+	local status=$(get_output)
+	if [[ "$status" = "SP" ]]; then
 		echo "Toggle SP to HP"
-		pacmd set-sink-port "$outputSink" "$headphone"
-	else
+		pactl set-sink-port "$outputSink" "$headphone"
+	elif [[ "$status" = "HP" ]]; then
 		echo "Toggle HP to SP"
-		pacmd set-sink-port "$outputSink" "$speaker"
+		pactl set-sink-port "$outputSink" "$speaker"
+	else
+		echo "$status"
+		echo "Error toggling output"
+		exit 1
 	fi
 }
 
