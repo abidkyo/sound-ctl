@@ -43,10 +43,10 @@ speaker="analog-output-lineout"
 headphone="analog-output-headphones"
 
 # Use "aplay -L" to find your input name.
-inputSources="Snowball"
+inputSource="Snowball"
 
 get_input() {
-	if amixer -c "$inputSources" sget Mic | grep -o "\[on\]" >/dev/null; then
+	if amixer -c "$inputSource" sget Mic | grep -o "\[on\]" >/dev/null; then
 		echo "[on]"
 	else
 		echo "[off]"
@@ -59,7 +59,7 @@ toggle_input() {
 	else
 		echo "Toggle input on"
 	fi
-	amixer -c "$inputSources" sset Mic toggle >/dev/null
+	amixer -c "$inputSource" sset Mic toggle >/dev/null
 }
 
 get_output() {
