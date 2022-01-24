@@ -42,24 +42,33 @@ outputSink="alsa_output.pci-0000_0b_00.3.analog-stereo"
 speaker="analog-output-lineout"
 headphone="analog-output-headphones"
 
-# Use "aplay -L" to find your input name.
-inputSource="Snowball"
+# Use "pactl list sources" to find your input name.
+inputSource="alsa_input.usb-BLUE_MICROPHONE_Blue_Snowball_201306-00.mono-fallback"
 
 get_input() {
-	if amixer -c "$inputSource" sget Mic | grep -o "\[on\]" >/dev/null; then
+	local mute=$(pactl list sources | grep -A 7 "$inputSource" | grep "Mute")
+	if [[ "$mute" =~ "yes" ]]; then
+		echo "[off]"
+	elif [[ "$mute" =~ "no" ]]; then
 		echo "[on]"
 	else
-		echo "[off]"
+		echo "Error getting input status"
+		exit 1
 	fi
 }
 
 toggle_input() {
-	if [[ "$(get_input)" = "[on]" ]]; then
+	local status=$(get_input)
+	if [[ "$status" = "[on]" ]]; then
 		echo "Toggle input off"
-	else
+	elif [[ "$status" = "[off]" ]]; then
 		echo "Toggle input on"
+	else
+		echo "$status"
+		echo "Error toggling input"
+		exit 1
 	fi
-	amixer -c "$inputSource" sset Mic toggle >/dev/null
+	pactl set-source-mute "$inputSource" "toggle"
 }
 
 get_output() {
