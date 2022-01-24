@@ -37,7 +37,7 @@ EOF
 	exit 1
 }
 
-# Use "pacmd list-sinks" to find your output sink and port names.
+# Use "pactl list sinks" to find your output sink and port names.
 outputSink="alsa_output.pci-0000_0b_00.3.analog-stereo"
 speaker="analog-output-lineout"
 headphone="analog-output-headphones"
@@ -131,9 +131,9 @@ get_status() {
 
 set_default() {
 	# Set default volume for both ports.
-	pacmd set-sink-port "$outputSink" "$headphone"
+	pactl set-sink-port "$outputSink" "$headphone"
 	pactl set-sink-volume "$outputSink" 50%
-	pacmd set-sink-port "$outputSink" "$speaker"
+	pactl set-sink-port "$outputSink" "$speaker"
 	pactl set-sink-volume "$outputSink" 50%
 }
 
