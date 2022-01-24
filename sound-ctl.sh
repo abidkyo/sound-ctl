@@ -99,20 +99,29 @@ toggle_output() {
 }
 
 get_volume() {
-	if ! pacmd list-sinks | grep -A 10 "$outputSink" |
-		grep -o 'volume: front-left:.*dB' | cut -d ' ' -f 6; then
+	if ! pactl list sinks | grep -A 10 "$outputSink" |
+		grep -o "Volume: front-left:.*dB" | tr -s " " | cut -d ' ' -f 5; then
 		echo "Error getting volume"
+		exit 1
 	fi
 }
 
 set_volume() {
-	if [[ $1 -ge 0 && $1 -le 100 ]]; then
-		pactl set-sink-volume "$outputSink" $1% || show_help
-		echo "Set volume to $1%"
-	else
+	local volume=$1
+	# Check if volume value is given.
+	if [[ -z $volume ]]; then
+		echo "No volume value given"
+		show_help
+	fi
+
+	# Check if volume value between 0 and 100.
+	if [[ ! $volume -ge 0 || ! $volume -le 100 ]]; then
 		echo "Invalid volume value"
 		show_help
 	fi
+
+	echo "Set volume to $volume%"
+	pactl set-sink-volume "$outputSink" $volume%
 }
 
 get_status() {
