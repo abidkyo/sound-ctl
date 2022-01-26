@@ -44,7 +44,7 @@ speakerPort="analog-output-lineout"
 headphonePort="analog-output-headphones"
 
 get_input() {
-	local mute=$(pactl list sources | grep -A 7 "$inputSource" | grep "Mute")
+	local mute=$(pactl list sources | grep -A 7 "Name: ${inputSource}$" | grep "Mute")
 	if [[ "$mute" =~ "yes" ]]; then
 		echo "[off]"
 	elif [[ "$mute" =~ "no" ]]; then
@@ -70,7 +70,7 @@ toggle_input() {
 }
 
 get_output() {
-	local active_port=$(pactl list sinks | grep -A 50 "$outputSink" | grep "Active Port")
+	local active_port=$(pactl list sinks | grep -A 50 "Name: ${outputSink}$" | grep "Active Port")
 	if [[ "$active_port" =~ "$speakerPort" ]]; then
 		echo "SP"
 	elif [[ "$active_port" =~ "$headphonePort" ]]; then
@@ -97,7 +97,7 @@ toggle_output() {
 }
 
 get_volume() {
-	if ! pactl list sinks | grep -A 10 "$outputSink" |
+	if ! pactl list sinks | grep -A 10 "Name: ${outputSink}$" |
 		grep -o "Volume: front-left:.*dB" | tr -s " " | cut -d ' ' -f 5; then
 		echo "Error getting volume"
 		exit 1
