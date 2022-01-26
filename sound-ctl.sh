@@ -37,13 +37,11 @@ EOF
 	exit 1
 }
 
-# Use "pactl list sinks" to find your output sink and port names.
+# See setup script to see how these variables are set.
 outputSink="alsa_output.pci-0000_0b_00.3.analog-stereo"
+inputSource="alsa_input.usb-BLUE_MICROPHONE_Blue_Snowball_201306-00.mono-fallback"
 speakerPort="analog-output-lineout"
 headphonePort="analog-output-headphones"
-
-# Use "pactl list sources" to find your input name.
-inputSource="alsa_input.usb-BLUE_MICROPHONE_Blue_Snowball_201306-00.mono-fallback"
 
 get_input() {
 	local mute=$(pactl list sources | grep -A 7 "$inputSource" | grep "Mute")
