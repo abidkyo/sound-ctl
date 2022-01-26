@@ -39,8 +39,8 @@ EOF
 
 # Use "pactl list sinks" to find your output sink and port names.
 outputSink="alsa_output.pci-0000_0b_00.3.analog-stereo"
-speaker="analog-output-lineout"
-headphone="analog-output-headphones"
+speakerPort="analog-output-lineout"
+headphonePort="analog-output-headphones"
 
 # Use "pactl list sources" to find your input name.
 inputSource="alsa_input.usb-BLUE_MICROPHONE_Blue_Snowball_201306-00.mono-fallback"
@@ -73,9 +73,9 @@ toggle_input() {
 
 get_output() {
 	local active_port=$(pactl list sinks | grep -A 50 "$outputSink" | grep "Active Port")
-	if [[ "$active_port" =~ "$speaker" ]]; then
+	if [[ "$active_port" =~ "$speakerPort" ]]; then
 		echo "SP"
-	elif [[ "$active_port" =~ "$headphone" ]]; then
+	elif [[ "$active_port" =~ "$headphonePort" ]]; then
 		echo "HP"
 	else
 		echo "Error getting output status"
@@ -87,10 +87,10 @@ toggle_output() {
 	local status=$(get_output)
 	if [[ "$status" = "SP" ]]; then
 		echo "Toggle SP to HP"
-		pactl set-sink-port "$outputSink" "$headphone"
+		pactl set-sink-port "$outputSink" "$headphonePort"
 	elif [[ "$status" = "HP" ]]; then
 		echo "Toggle HP to SP"
-		pactl set-sink-port "$outputSink" "$speaker"
+		pactl set-sink-port "$outputSink" "$speakerPort"
 	else
 		echo "$status"
 		echo "Error toggling output"
@@ -131,9 +131,9 @@ get_status() {
 
 set_default() {
 	# Set default volume for both ports.
-	pactl set-sink-port "$outputSink" "$headphone"
+	pactl set-sink-port "$outputSink" "$headphonePort"
 	pactl set-sink-volume "$outputSink" 50%
-	pactl set-sink-port "$outputSink" "$speaker"
+	pactl set-sink-port "$outputSink" "$speakerPort"
 	pactl set-sink-volume "$outputSink" 50%
 }
 
