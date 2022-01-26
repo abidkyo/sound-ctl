@@ -71,6 +71,12 @@ toggle_input() {
 
 get_output() {
 	local active_port=$(pactl list sinks | grep -A 50 "Name: ${outputSink}$" | grep "Active Port")
+
+	if [[ -z "$active_port" ]]; then
+		echo "Error getting output status"
+		exit 1
+	fi
+
 	if [[ "$active_port" =~ "$speakerPort" ]]; then
 		echo "SP"
 	elif [[ "$active_port" =~ "$headphonePort" ]]; then
