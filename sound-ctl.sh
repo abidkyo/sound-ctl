@@ -44,10 +44,15 @@ speakerPort="analog-output-lineout"
 headphonePort="analog-output-headphones"
 
 get_input() {
-	local mute=$(pactl list sources | grep -A 7 "Name: ${inputSource}$" | grep "Mute")
-	if [[ "$mute" =~ "yes" ]]; then
+	local mute=$(
+		pactl list sources |
+			sed -n "/Name: ${inputSource}$/,/Mute/p" |
+			sed -E '/Mute/!d;s/.*: (.*)$/\1/'
+	)
+
+	if [[ "$mute" = "yes" ]]; then
 		echo "[off]"
-	elif [[ "$mute" =~ "no" ]]; then
+	elif [[ "$mute" = "no" ]]; then
 		echo "[on]"
 	else
 		echo "Error getting input status"
@@ -70,16 +75,20 @@ toggle_input() {
 }
 
 get_output() {
-	local active_port=$(pactl list sinks | grep -A 50 "Name: ${outputSink}$" | grep "Active Port")
+	local active_port=$(
+		pactl list sinks |
+			sed -n "/Name: ${outputSink}$/,/Active Port/p" |
+			sed -E '/Active Port/!d;s/.*: (.*)$/\1/'
+	)
 
 	if [[ -z "$active_port" ]]; then
 		echo "Error getting output status"
 		exit 1
 	fi
 
-	if [[ "$active_port" =~ "$speakerPort" ]]; then
+	if [[ "$active_port" = "$speakerPort" ]]; then
 		echo "SP"
-	elif [[ "$active_port" =~ "$headphonePort" ]]; then
+	elif [[ "$active_port" = "$headphonePort" ]]; then
 		echo "HP"
 	else
 		echo "Error getting output status"
@@ -103,11 +112,17 @@ toggle_output() {
 }
 
 get_volume() {
-	if ! pactl list sinks | grep -A 10 "Name: ${outputSink}$" |
-		grep -o "Volume: front-left:.*dB" | tr -s " " | cut -d ' ' -f 5; then
+	volume=$(
+		pactl list sinks |
+			sed -n "/Name: ${outputSink}$/,/Volume/p" |
+			sed -E '/Volume/!d;s/.*([0-9]{2,3}%).*/\1/'
+	)
+
+	if [[ -z "$volume" ]]; then
 		echo "Error getting volume"
 		exit 1
 	fi
+	echo "$volume"
 }
 
 set_volume() {

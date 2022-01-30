@@ -87,8 +87,9 @@ ask_default() {
 assign_speaker_headphone() {
 	# Check how many ports available for the default sink.
 	local ports=($(
-		pactl list sinks | grep -A 50 ${default_sink_source[$id_sink]} |
-			sed -n '/Ports/,/Active/p' | sed '1d;$d' | tr -d '[:blank:]' | sed 's/:.*//'
+		pactl list sinks |
+			sed -n "/Name: ${default_sink_source[$id_sink]}$/,/Active Port/{/Ports/,//p}" |
+			sed -E '1d;$d;s/^\s+([a-z-]+):.*$/\1/'
 	))
 	local port_count=${#ports[@]}
 
@@ -139,9 +140,8 @@ if ! which pactl >/dev/null; then
 fi
 
 # Get default sink and source.
-info=$(pactl info)
-default_sink_source+=($(echo "$info" | grep "Default Sink" | cut -d " " -f 3))
-default_sink_source+=($(echo "$info" | grep "Default Source" | cut -d " " -f 3))
+default_sink_source=($(pactl info | sed -nE -e '/Sink/,/Source/p'))
+default_sink_source=("${default_sink_source[@]##*: }")
 
 # Set default sink and source.
 ask_default $id_sink
@@ -158,12 +158,12 @@ echo "Speaker Port: ${speaker_headphone[$id_speaker]}"
 echo "Headphone Port: ${speaker_headphone[$id_headphone]}"
 echo # blank line
 
-# Replace variables inside script.
-sed -i "
-s/^outputSink=.*\$/outputSink=\"${default_sink_source[$id_sink]}\"/;
-s/^inputSource=.*\$/inputSource=\"${default_sink_source[$id_source]}\"/;
-s/^speakerPort=.*\$/speakerPort=\"${speaker_headphone[$id_speaker]}\"/;
-s/^headphonePort=.*\$/headphonePort=\"${speaker_headphone[$id_headphone]}\"/;
+# Replace config inside script.
+sed -i -E "
+s/^(outputSink=).*\$/\1\"${default_sink_source[$id_sink]}\"/;
+s/^(inputSource=).*\$/\1\"${default_sink_source[$id_source]}\"/;
+s/^(speakerPort=).*\$/\1\"${speaker_headphone[$id_speaker]}\"/;
+s/^(headphonePort=).*\$/\1\"${speaker_headphone[$id_headphone]}\"/;
 " ./sound-ctl.sh
 
 exit 0
