@@ -43,7 +43,22 @@ EXTRA_ARGS is needed for OPTION:
   sv  : volume level between 0-100
 ```
 
+## Setup
+
+Run `setup.sh` to setup the sound control script. \
+This will set the config required to run the script:
+
+- `output sink`
+- `input source`
+- `speaker port`
+- `headphone port`
+
 ### Note
+
+There is also a test script (`test.sh`) for the sound control script for:
+
+- testing output of `gi`, `go`, and `gv`
+- testing exit code for every commands.
 
 Tested with Linux Mint 20.2 and PulseAudio 13.99.1
 
