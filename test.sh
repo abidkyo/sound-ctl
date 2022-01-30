@@ -85,9 +85,9 @@ done
 # Test Command ------------------------------------------
 # with incorrect config ---------------------------------
 
-# Copy script and clear config to cause error.
+# Copy script and remove some word from config to cause error.
 cp ./sound-ctl.sh ./sound-ctl-error.sh
-sed -i '/outputSink=/,/headphonePort=/s/".*"/""/' ./sound-ctl-error.sh
+sed -i '/outputSink=/,/headphonePort=/s/-.*/"/' ./sound-ctl-error.sh
 
 echo "Test with incorrect config"
 echo # blank line

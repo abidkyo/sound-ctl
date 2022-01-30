@@ -43,6 +43,12 @@ inputSource="alsa_input.usb-BLUE_MICROPHONE_Blue_Snowball_201306-00.mono-fallbac
 speakerPort="analog-output-lineout"
 headphonePort="analog-output-headphones"
 
+if [[ -z "$outputSink" || -z "$inputSource" || -z "$speakerPort" || -z "$headphonePort" ]]; then
+	echo "Config is empty."
+	echo "Consider running setup script or set the config."
+	exit 1
+fi
+
 get_input() {
 	local mute=$(
 		pactl list sources |
