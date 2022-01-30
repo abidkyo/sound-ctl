@@ -166,4 +166,6 @@ s/^(speakerPort=).*\$/\1\"${speaker_headphone[$id_speaker]}\"/;
 s/^(headphonePort=).*\$/\1\"${speaker_headphone[$id_headphone]}\"/;
 " ./sound-ctl.sh
 
+echo "Setup finished successfully"
+
 exit 0

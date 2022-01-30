@@ -30,7 +30,7 @@ if [[ "$res" =~ $re ]]; then
 	test_exit_code_success
 else
 	echo "Test get input status failed."
-	echo "Consider running setup script or check your inputSource variable."
+	echo "Consider running setup script or check the inputSource config."
 	test_exit_code_fail
 	exit 1
 fi
@@ -45,7 +45,7 @@ if [[ "$res" =~ $re ]]; then
 	test_exit_code_success
 else
 	echo "Test get output status failed."
-	echo "Consider running setup script or check your outputSink, speakerPort and headphonePort variable."
+	echo "Consider running setup script or check the outputSink, speakerPort and headphonePort config."
 	exit 1
 	test_exit_code_fail
 fi
@@ -61,7 +61,7 @@ if [[ "$res" =~ $re ]]; then
 	test_exit_code_success
 else
 	echo "Test get volume failed."
-	echo "Consider running setup script or check your output variable."
+	echo "Consider running setup script or check the outputSink config."
 	test_exit_code_fail
 	exit 1
 fi

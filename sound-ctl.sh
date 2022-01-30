@@ -37,7 +37,7 @@ EOF
 	exit 1
 }
 
-# See setup script to see how these variables are set.
+# See setup script to see how these configs are set.
 outputSink="alsa_output.pci-0000_0b_00.3.analog-stereo"
 inputSource="alsa_input.usb-BLUE_MICROPHONE_Blue_Snowball_201306-00.mono-fallback"
 speakerPort="analog-output-lineout"
@@ -134,7 +134,7 @@ set_volume() {
 	fi
 
 	# Check if volume value between 0 and 100.
-	if [[ ! $volume -ge 0 || ! $volume -le 100 ]]; then
+	if ! [[ $volume -ge 0 && $volume -le 100 ]]; then
 		echo "Invalid volume value"
 		show_help
 	fi
